@@ -12,8 +12,13 @@ private extension String {
 }
 
 struct SpotifyMatch {
-    let api: SpotifyAPI
-    let directory: URL
+    private let api: SpotifyAPI
+    private let directory: URL
+
+    init(api: SpotifyAPI, directory: URL) {
+        self.api = api
+        self.directory = directory
+    }
 
     enum Result {
         case success(Song)
@@ -41,12 +46,10 @@ struct SpotifyMatch {
         var results = [Result]()
         var delay: TimeInterval = 0
         for case let file as URL in enumerator {
-            var isFolder: ObjCBool = false
-            guard FileManager.default.fileExists(atPath: file.path, isDirectory: &isFolder) else {
-                continue
-            }
-
-            guard !isFolder.boolValue else {
+            var isDirectory: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: file.path, isDirectory: &isDirectory),
+                !isDirectory.boolValue else
+            {
                 continue
             }
 
